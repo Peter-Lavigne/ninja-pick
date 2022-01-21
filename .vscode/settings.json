@@ -1,0 +1,11 @@
+{
+  "sqltools.connections": [
+    {
+      "previewLimit": 50,
+      "driver": "SQLite",
+      "database": "${workspaceFolder:ninja-pick}/db/development.sqlite3",
+      "name": "development"
+    }
+  ],
+  "sqltools.useNodeRuntime": true
+}

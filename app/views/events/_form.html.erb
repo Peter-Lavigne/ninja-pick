@@ -1,0 +1,47 @@
+<%= form_with(model: event) do |form| %>
+  <% if event.errors.any? %>
+    <div style="color: red">
+      <h2><%= pluralize(event.errors.count, "error") %> prohibited this event from being saved:</h2>
+
+      <ul>
+        <% event.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= form.label :name, style: "display: block" %>
+    <%= form.text_field :name %>
+  </div>
+
+  <p>
+    Please enter a newline-separated list of ninja names for each field.
+    You should be able to copy and paste the column from a spreadsheet.
+  </p>
+
+  <div>
+    <%= form.label :ninjas_male, style: "display: block" %>
+    <%= form.text_area :ninjas_male, rows: 10, value: event.ninjas.where(sex: 'male').pluck(:name).join("\n") %>
+  </div>
+
+  <div>
+    <%= form.label :ninjas_female, style: "display: block" %>
+    <%= form.text_area :ninjas_female, rows: 10, value: event.ninjas.where(sex: 'female').pluck(:name).join("\n") %>
+  </div>
+
+  <div>
+    <p>
+      When this box is checked, no more picks can be cast.
+      Ninjas will be ranked in the order listed above. You should copy the results from a spreadsheet like before.
+      Warning: If any names are misspelled or not included, those picks will be lost.
+    </p>
+    <%= form.label :finished, style: "display: block" %>
+    <%= form.check_box :finished %>
+  </div>
+
+  <div>
+    <%= form.submit %>
+  </div>
+<% end %>

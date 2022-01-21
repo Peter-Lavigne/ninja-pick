@@ -1,0 +1,50 @@
+<div id="<%= dom_id event %>">
+  <p>
+    <strong>Name:</strong>
+    <%= event.name %>
+  </p>
+
+  <% if event.finished? %>
+    <p>Finished</p>
+  <% else %>
+    <p>Upcoming</p>
+  <% end %>
+
+  <p>
+    <strong>Ninjas (male)</strong>
+    <% if event.finished? %>
+      <ol>
+    <% else %>
+      <ul>
+    <% end %>
+      <% event.ninjas.where(sex: 'male').map do |ninja| %> 
+        <li>
+          <%= ninja.name %>
+        </li>
+      <% end %>
+    <% if event.finished? %>
+      </ol>
+    <% else %>
+      </ul>
+    <% end %>
+  </p>
+
+  <p>
+    <strong>Ninjas (female)</strong>
+    <% if event.finished? %>
+      <ol>
+    <% else %>
+      <ul>
+    <% end %>
+      <% event.ninjas.where(sex: 'female').map do |ninja| %> 
+        <li>
+          <%= ninja.name %>
+        </li>
+      <% end %>
+    <% if event.finished? %>
+      </ol>
+    <% else %>
+      </ul>
+    <% end %>
+  </p>
+</div>

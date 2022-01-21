@@ -1,0 +1,10 @@
+<h1>Editing pick</h1>
+
+<%= render "form", pick: @pick %>
+
+<br>
+
+<div>
+  <%= link_to "Show this pick", event_pick_path(@event, @pick) %> |
+  <%= link_to "Back to picks", event_picks_path(@event) %>
+</div>

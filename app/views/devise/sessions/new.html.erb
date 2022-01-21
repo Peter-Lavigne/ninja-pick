@@ -1,0 +1,11 @@
+<div style='text-align: center;'>
+  <h2>Log in</h2>
+
+  <p>
+    <%= link_to 'Back to leaderboard', '/' %>
+  </p>
+
+  <%- resource_class.omniauth_providers.each do |provider| %>
+    <%= button_to "Sign in with #{provider.to_s === 'facebook' ? 'Facebook' : 'Google'}", omniauth_authorize_path(resource_name, provider), method: :post, "data-turbo": false %><br />
+  <% end %>
+<div>

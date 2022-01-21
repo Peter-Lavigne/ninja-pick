@@ -1,0 +1,8 @@
+<%= render @pick %>
+
+<div>
+  <%= link_to "Edit this pick", edit_event_pick_path(@pick) %> |
+  <%= link_to "Back to picks", event_picks_path(@event) %>
+
+  <%= button_to "Destroy this pick", event_pick_path(@event, @pick), method: :delete %>
+</div>
