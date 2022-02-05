@@ -34,6 +34,7 @@ interface Pick {
   };
   ninja: Ninja;
   placement: number;
+  score: number | null;
 }
 
 interface EventData {
@@ -59,6 +60,12 @@ const dataStates = {
   SUCCESS: 4
 }
 
+interface FormattedPick {
+  ninjaName: string;
+  placement: number;
+  score: number | null;
+}
+
 function formatPicks(picks: Pick[]) {
   return picks.reduce((prev, cur) => {
     let user = prev.find(u => u.id === cur.user.id);
@@ -74,13 +81,15 @@ function formatPicks(picks: Pick[]) {
     if (cur.ninja.sex === 'male') {
       user.malePicks.push({
         ninjaName: cur.ninja.name,
-        placement: cur.placement
+        placement: cur.placement,
+        score: cur.score
       })
       user.malePicks.sort((a, b) => a.placement! - b.placement!)
     } else {
       user.femalePicks.push({
         ninjaName: cur.ninja.name,
-        placement: cur.placement
+        placement: cur.placement,
+        score: cur.score
       })
       user.femalePicks.sort((a, b) => a.placement! - b.placement!)
     }
@@ -88,8 +97,8 @@ function formatPicks(picks: Pick[]) {
   }, [] as Array<{
     id: number,
     name: string,
-    malePicks: Array<{ ninjaName: string, placement: number }>,
-    femalePicks: Array<{ ninjaName: string, placement: number }>
+    malePicks: FormattedPick[],
+    femalePicks: FormattedPick[]
   }>)
 }
 
@@ -138,7 +147,11 @@ export function App() {
           )
         }
         {
-          !data!.event.finished && (
+          data!.event.finished ? (
+            <Typography align='center' variant='h6' sx={{ marginTop: 2, marginBottom: 1 }}>
+              This event is finished. Picks can no longer be made.
+            </Typography>
+          ) : (
             <Typography align='center' variant='h6' sx={{ marginTop: 2, marginBottom: 1 }}>
               <Link href={`/events/${eventId()}/picks`}>Update picks for this event</Link>
             </Typography>
@@ -147,13 +160,13 @@ export function App() {
         <Typography component='h3' variant='h5' align='center' sx={{ marginTop: 2 }}>Male Ninjas</Typography>
         {
           data!.event.ninjas.filter(n => n.sex === 'male').map(ninja => (
-            <Typography key={ninja.name} align='center'>{data!.event.finished ? `${ninja.position + 1} - ` : ''}{ninja.name}</Typography>
+            <Typography key={ninja.name} align='center'>{data!.event.finished ? `${ninja.position! + 1} - ` : ''}{ninja.name}</Typography>
           ))
         }
         <Typography component='h3' variant='h5' align='center' sx={{ marginTop: 2 }}>Female Ninjas</Typography>
         {
           data!.event.ninjas.filter(n => n.sex === 'female').map(ninja => (
-            <Typography key={ninja.name} align='center'>{data!.event.finished ? `${ninja.position + 1} - ` : ''}{ninja.name}</Typography>
+            <Typography key={ninja.name} align='center'>{data!.event.finished ? `${ninja.position! + 1} - ` : ''}{ninja.name}</Typography>
           ))
         }
         <Typography component='h3' variant='h4' align='center' sx={{ marginTop: 2 }}>Picks</Typography>
@@ -164,13 +177,13 @@ export function App() {
               <Typography align='center'>Male Picks</Typography>
               {
                 user.malePicks.map(pick => (
-                  <Typography key={pick.ninjaName} align='center'>{pick.placement + 1} - {pick.ninjaName}</Typography>
+                  <Typography key={pick.ninjaName} align='center'>{pick.placement + 1} - {pick.ninjaName}{pick.score === null ? '' : `(+ ${pick.score / 10})`}</Typography>
                 ))
               }
               <Typography align='center' sx={{ marginTop: 1 }}>Female Picks</Typography>
               {
                 user.femalePicks.map(pick => (
-                  <Typography key={pick.ninjaName} align='center'>{pick.placement + 1} - {pick.ninjaName}</Typography>
+                  <Typography key={pick.ninjaName} align='center'>{pick.placement + 1} - {pick.ninjaName}{pick.score === null ? '' : `(+ ${pick.score / 10})`}</Typography>
                 ))
               }
             </>

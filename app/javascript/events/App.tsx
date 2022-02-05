@@ -37,6 +37,10 @@ const dataStates = {
   SUCCESS: 4
 }
 
+function filteredEvents(data: EventsData, finished: boolean) {
+  return data!.events.filter(e => e.finished === finished);
+}
+
 export function App() {
   const [dataState, setDataState] = useState(dataStates.INITIAL);
   const [data, setData] = useState(null as EventsData | null);
@@ -79,7 +83,12 @@ export function App() {
         }
         <Typography component='h2' variant='h4' align='center'  >Upcoming Events</Typography>
         {
-          data!.events.filter(e => !e.finished).map(event => (
+          filteredEvents(data!, false).length === 0 && (
+            <Typography sx={{ fontStyle: 'italic' }} variant='h6' align='center'  >No upcoming events</Typography>
+          )
+        }
+        {
+          filteredEvents(data!, false).map(event => (
             <Typography align='center' variant='h6'>
               <Link href={`/events/${event.id}`}>{event.name}</Link>
             </Typography>
@@ -87,7 +96,12 @@ export function App() {
         }
         <Typography component='h2' variant='h4' align='center' sx={{ marginTop: 2 }}>Finished Events</Typography>
         {
-          data!.events.filter(e => e.finished).map(event => (
+          filteredEvents(data!, true).length === 0 && (
+            <Typography sx={{ fontStyle: 'italic' }} variant='h6' align='center'  >No finished events</Typography>
+          )
+        }
+        {
+          filteredEvents(data!, true).map(event => (
             <Typography align='center' variant='h6'>
               <Link href={`/events/${event.id}`}>{event.name}</Link>
             </Typography>

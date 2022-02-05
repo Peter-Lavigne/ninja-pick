@@ -41,7 +41,7 @@ function rows(data: LeaderboardData, tabValue: number) {
   const userRows = data.users.map(user => {
     return {
       name: user.name,
-      score: user.events.reduce((prev, cur) => prev + [cur.score / 10, cur.correct_picks, cur.top_three][tabValue], 0),
+      score: user.events.reduce((prev, cur) => prev + [cur.score, cur.correct_picks, cur.top_three][tabValue], 0) / (tabValue === 0 ? 10 : 1),
       history: user.events.map(({ id, name, score, correct_picks, top_three }) => {
         return {
           id,
@@ -51,7 +51,7 @@ function rows(data: LeaderboardData, tabValue: number) {
       })
     }
   });
-  userRows.sort((a, b) => a.score - b.score);
+  userRows.sort((a, b) => b.score - a.score);
   return userRows;
 }
 

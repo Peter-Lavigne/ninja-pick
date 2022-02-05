@@ -8,7 +8,7 @@ class Api::ApiController < ApplicationController
         {
           name: user.name,
           events: events.map do |event|
-            scores = scores_for_event(user, event)
+            scores = ScoresService.leaderboard_scores(user, event)
             {
               id: event.id,
               name: event.name,
@@ -49,7 +49,8 @@ class Api::ApiController < ApplicationController
               sex: pick.ninja.sex,
               position: pick.ninja.position
             },
-            placement: pick.placement
+            placement: pick.placement,
+            score: event.finished? ? ScoresService.pick_score(pick) : nil
           }
         end
       },
@@ -118,52 +119,5 @@ class Api::ApiController < ApplicationController
         )
       end
     end
-  end
-
-  private
-
-  def scores_for_event(user, event)
-    ninjas = event.ninjas
-    picks = user.picks.where(event: event).joins(:ninja)
-    
-    score = 0
-    correct_picks = 0
-    top_three_male = true
-    top_three_female = true
-    male_count = ninjas.where(sex: 'male').size
-    female_count = ninjas.where(sex: 'female').size
-    (0..2).each do |placement|
-      if pick = picks.find_by(placement: placement, ninja: { sex: 'male'} )
-        distance = (pick.placement - pick.ninja.position).abs
-        score += [5, 3, 2][placement] * (male_count - distance)
-        if distance == 0
-          correct_picks += 1
-        else
-          top_three_male = false
-        end
-      else
-        top_three_male = false
-      end
-
-      if pick = picks.find_by(placement: placement, ninja: { sex: 'female'} )
-        distance = (pick.placement - pick.ninja.position).abs
-        score += [5, 3, 2][placement] * (female_count - distance)
-        if distance == 0
-          correct_picks += 1
-        else
-          top_three_female = false
-        end
-      else
-        top_three_female = false
-      end
-    end
-
-    score = score + correct_picks * 10
-    
-    {
-      score: score,
-      correct_picks: correct_picks,
-      top_three: (top_three_male ? 1 : 0) + (top_three_female ? 1 : 0)
-    }
   end
 end
